@@ -1,6 +1,6 @@
 <h1 align="center">DeepSeek Translator Bob Plugin</h1>
 
-基于 [DeepSeek](https://deepseek.com/) 的翻译插件。
+基于 [DeepSeek](https://deepseek.com/) 的 bob 翻译插件。
 
 ### 模型
 
@@ -15,6 +15,6 @@
 
 3. 安装此插件
 
-4. 去 [DeepSeek](https://deepseek.com/) 获取 APIKey
+4. 去 [DeepSeek](https://deepseek.com/) 获取 API Key
 
-5. 把 API KEY 填入 Bob 偏好设置 > 服务 > 此插件配置界面的 API KEY 的输入框中
+5. 把 API KEY 填入 Bob 偏好设置 > 服务 > 此插件配置界面的 API Key 的输入框中
