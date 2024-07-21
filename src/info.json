@@ -1,0 +1,37 @@
+{
+  "identifier": "hashcookie.deepseek.translator",
+  "version": "0.1.0",
+  "category": "translate",
+  "name": "DeepSeek Translator",
+  "summary": "使用 DeepSeek AI 进行文本翻译",
+  "author": "HashCookie",
+  "homepage": "https://github.com/HashCookie/bob-plugin-deepseek-translator",
+  "minBobVersion": "0.5.0",
+  "options": [
+    {
+      "identifier": "apiKey",
+      "type": "text",
+      "title": "API Key",
+      "desc": "请输入您的 DeepSeek API Key",
+      "textConfig": {
+        "type": "secure"
+      }
+    },
+    {
+      "identifier": "model",
+      "type": "menu",
+      "title": "模型",
+      "defaultValue": "deepseek-chat",
+      "menuValues": [
+        {
+          "title": "deepseek-chat",
+          "value": "deepseek-chat"
+        },
+        {
+          "title": "deepseek-coder",
+          "value": "deepseek-coder"
+        }
+      ]
+    }
+  ]
+}
