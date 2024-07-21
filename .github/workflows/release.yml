@@ -2,39 +2,38 @@ name: Release Bob Plugin
 
 on:
   push:
-    tags:
-      - "v*.*.*"
-
+    tags: [v\d+\.\d+\.\d+]
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Zip the plugin
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Get version
+        id: get_version
+        uses: battila7/get-version-action@v2
+      - name: Get tag message
+        id: tag
         run: |
-          cd src
-          zip -r ../bob-plugin-deepseek-translator.zip *
-          cd ..
-          mv bob-plugin-deepseek-translator.zip bob-plugin-deepseek-translator.bobplugin
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+          echo "message=$(git tag -l --format='%(contents:subject)' ${{ steps.get_version.outputs.version }})" >> $GITHUB_OUTPUT
+      - name: Change version
+        run: |
+          OLD_VERSION=$(grep '"version":' src/info.json | awk -F\" '{print $4}')
+          sed -i "s/$OLD_VERSION/${{ steps.get_version.outputs.version-without-v }}/" src/info.json
+      - name: Package plugin
+        run: mkdir release && zip -j -r release/deepseek-translator-${{ steps.get_version.outputs.version-without-v }}.bobplugin ./src/*
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./bob-plugin-deepseek-translator.bobplugin
-          asset_name: bob-plugin-deepseek-translator.bobplugin
-          asset_content_type: application/zip
+          release_name: ${{ steps.get_version.outputs.version }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: release/deepseek-translator-${{ steps.get_version.outputs.version-without-v }}.bobplugin
+          asset_name: deepseek-translator-${{ steps.get_version.outputs.version-without-v }}.bobplugin
+          tag: ${{ github.ref }}
+          overwrite: true
+          body: ${{ steps.tag.outputs.message }}
